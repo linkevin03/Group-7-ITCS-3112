@@ -42,8 +42,8 @@ Service Implementation: TeamService
 
 Create: Add one valid, non-null Team object to the managed collection.
 Read: Retrieve a Team by its unique name and retrieve a read-only collection of all teams.
-Update: Locate an existing Team and change its state (e.g., name)
-Delete: Remove an existing Team from the collection
+Update: Locate an existing Team and change its state (e.g., name).
+Delete: Remove an existing Team from the collection.
 
 
 Service Invariants:
