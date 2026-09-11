@@ -21,3 +21,15 @@ Loser’s bracket: duplicate: bracket
 Prize: outside our boundary
 Match Telemetry data: outside our boundary
 Team matchups: duplicate: matches
+
+
+## Selected Domain Objects and CRC Cards
+Bracket, Team, Matches
+
+
+## Class Invariants and Enforcement
+Bracket: A Bracket must maintain a collection containing strictly more than one match. A Bracket must maintain a collection containing strictly more than one match.
+
+Team: A Team instance must possess a valid, non-empty name, logo, and region throughout its lifecycle. A Team instance must possess a valid, non-empty name, logo, and region throughout its lifecycle.
+
+Matches: Matches must reference two distinct, non-null teams, and neither participating team can be marked as eliminated when the match is instantiated. Enforced by the Matches constructor, which evaluates team references and elimination properties before assignment.
