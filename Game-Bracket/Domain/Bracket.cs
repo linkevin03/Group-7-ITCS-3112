@@ -2,21 +2,32 @@ namespace Game_Bracket.Domain;
 
 public class Bracket
 {
-    private IReadOnlyList<Match> Matches { get; }
-    public string bracketFill { get; }
+    private readonly List<Match> _matches = new List<Match>();
+    
+    public string BracketType { get; }
+    
+    public IReadOnlyCollection<Match> Matches => _matches.AsReadOnly();
 
-    public Bracket(string bracketFill, IEnumerable<Match> matches = null)
+    public Bracket(string type, IEnumerable<Match> matches)
     {
-        if (string.IsNullOrEmpty(bracketFill))
-            throw new ArgumentException("Bracket cannot be empty.",
-                nameof(bracketFill));
+        if (string.IsNullOrWhiteSpace(type))
+        {
+            throw new ArgumentException("Bracket type cannot be null or whitespace.", nameof(type));
+        }
+
         if (matches == null)
+        {
             throw new ArgumentNullException(nameof(matches));
+        }
+        
         List<Match> matchList = matches.ToList();
 
-        if (matchList.Any(match => match == null))
-            throw new ArgumentException("Bracket cannot hold a null match.",
-                nameof(matches));
-        this.bracketFill = bracketFill;
+        if (matchList.Count == 0)
+        {
+            throw new ArgumentException("No matches found.", nameof(matches));
+        }
+        
+        BracketType =  type;
+        _matches.AddRange(matchList);
     }
 }
