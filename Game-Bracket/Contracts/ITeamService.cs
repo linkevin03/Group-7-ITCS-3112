@@ -7,7 +7,7 @@ public interface ITeamService
 {
     void CreateTeam(Team team);
     Team GetTeamByName(string name);
-    private IEnumerable<Team> GetAllTeams;
+    IEnumerable<Team> GetAllTeams();
     void UpdateTeam(string currentName, string newName);
     void DeleteTeam(string name);
 }
