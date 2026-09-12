@@ -54,3 +54,20 @@ Service Invariants:
 The service ensures that no managed teams can share the same unique name, rejecting duplicates.
 The service prevents null additions and only exposes necessary data via read-only collections, ensuring that external callers cannot alter the collection directly.
 The service must prevent any CRUD operations on non-existent teams by throwing an exception.
+
+## UML Class Diagram
+Test1Memo_UML_Handout-Test 1 Memo UML Diagram.drawio.png
+
+Bracket 1 <>------- 0..* Match
+Bracket owns zero-to-many matches (at least one).
+
+Match 1 -------- 1 Team (TeamA reference)
+Match associates with exactly one team as TeamA.
+
+Match 1 -------- 1 Team (TeamB reference)
+Match associates with exactly one team as TeamB.
+
+TeamService 1 <>------- 0..* Team
+TeamService owns zero or more teams via composition.
+
+
