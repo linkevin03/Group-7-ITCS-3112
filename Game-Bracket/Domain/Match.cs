@@ -19,11 +19,22 @@ public class Match
 
         if (ReferenceEquals(teamA, teamB)) // Teams cannot face themselves
         {
-            throw new ArgumentNullException("Must be different teams.");
+            throw new ArgumentException("Must be different teams.");
         }
+
+        if (teamA.IsEliminated || teamB.IsEliminated)
+        {
+            throw new InvalidOperationException("Cannot schedule a match involving an eliminated team.");
+        }
+        
         TeamA = teamA;
         TeamB = teamB;
         StartTime = startTime;
+    }
+
+    public void UpdateSchedule(DateTime newTime)
+    {
+        StartTime = newTime;
     }
     
 }
