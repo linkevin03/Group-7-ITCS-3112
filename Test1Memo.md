@@ -1,4 +1,4 @@
-# Test 1 Memo  
+# Test 1 Memo
 ## Complete Noun and Noun-Phrase Inventory
 Team, win-loss records, Organizers, matches, elimination, loser's bracket, bracket, match schedules, team matchups, prize, match telemetry data
 
@@ -6,7 +6,7 @@ Team, win-loss records, Organizers, matches, elimination, loser's bracket, brack
 ## Keep as a Class
 Bracket: The overall structure of matches
 Team: Contain their own names, logos, etc.
-Matches: Represents the scheduled matches between teams
+Match: Represents the scheduled match between two teams
 
 
 ## Reclassify as an Attribute
@@ -20,11 +20,12 @@ Organizers: external actor
 Loser’s bracket: duplicate: bracket
 Prize: outside our boundary
 Match Telemetry data: outside our boundary
-Team matchups: duplicate: matches
+Team matchups: duplicate: match
+Matches: duplicate: match
 
 
 ## Selected Domain Objects and CRC Cards
-Bracket, Team, Matches
+Bracket, Team, Match
 
 
 ## Class Invariants and Enforcement
@@ -32,7 +33,7 @@ Bracket: A Bracket must maintain a collection containing strictly more than one 
 
 Team: A Team instance must possess a valid, non-empty name, logo, and region throughout its lifecycle. A Team instance must possess a valid, non-empty name, logo, and region throughout its lifecycle.
 
-Matches: Matches must reference two distinct, non-null teams, and neither participating team can be marked as eliminated when the match is instantiated. Enforced by the Matches constructor, which evaluates team references and elimination properties before assignment.
+Match: Match must reference two distinct, non-null teams, and neither participating team can be marked as eliminated when the match is instantiated. Enforced by the Match constructor, which evaluates team references and elimination properties before assignment.
 
 ## CRUD Service and Service Invariants
 Domain object: Team
