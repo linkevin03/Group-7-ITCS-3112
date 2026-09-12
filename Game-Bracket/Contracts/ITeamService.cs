@@ -1,6 +1,13 @@
+using System.Collections.Generic;
+using Game_Bracket.Domain;
+
 namespace Game_Bracket.Contracts;
 
-public class ITeamService
+public interface ITeamService
 {
-    
+    void CreateTeam(Team team);
+    Team GetTeamByName(string name);
+    private IEnumerable<Team> GetAllTeams;
+    void UpdateTeam(string currentName, string newName);
+    void DeleteTeam(string name);
 }
