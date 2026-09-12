@@ -44,8 +44,12 @@ public class Team
 
     public void Eliminate() //Updates team to eliminated if they lose
     {
-        if (IsEliminated){throw new InvalidOperationException(
-            "Team is already eliminated.");}
+        if (IsEliminated)
+        {
+            throw new InvalidOperationException(
+                "Team is already eliminated.");
+        }
+
         IsEliminated = true;
     }
 }
