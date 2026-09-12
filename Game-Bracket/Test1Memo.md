@@ -59,7 +59,7 @@ The service must prevent any CRUD operations on non-existent teams by throwing a
 Test1Memo_UML_Handout-Test 1 Memo UML Diagram.drawio.png
 
 Bracket 1 <>------- 0..* Match
-Bracket owns zero-to-many matches (at least one).
+Bracket owns zero-to-many matches.
 
 Match 1 -------- 1 Team (TeamA reference)
 Match associates with exactly one team as TeamA.
