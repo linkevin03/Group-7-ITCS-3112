@@ -10,13 +10,13 @@ public class Team
 
     public Team(string name, string logo)
     {
-        if (string.IsNullOrEmpty(Name))
+        if (string.IsNullOrEmpty(name))
             throw new ArgumentException("Must have a team name.",
                 nameof(name));
-        if (string.IsNullOrEmpty(Logo))
+        if (string.IsNullOrEmpty(logo))
             throw new ArgumentException("Must have a team logo.",
                 nameof(logo));
-        
+
         Name = name;
         Logo = logo;
         IsEliminated = false;
@@ -26,19 +26,34 @@ public class Team
 
     public void UpdateName(string newName)
     {
+        if (string.IsNullOrWhiteSpace(newName))
+        {
+            throw new ArgumentException("Must have a team name.",
+                nameof(newName));
+        }
+
         Name = newName;
     }
+
     public void RecordWin() //Adds to win counter
     {
-        if (IsEliminated){throw new InvalidOperationException(
-            "Team is eliminated.");}
+        if (IsEliminated)
+        {
+            throw new InvalidOperationException(
+                "Team is eliminated.");
+        }
+
         Wins++;
     }
 
     public void RecordLoss() //Updates loss counter
     {
-        if (IsEliminated){throw new InvalidOperationException(
-            "Team is already eliminated - cannot record loss.");}
+        if (IsEliminated)
+        {
+            throw new InvalidOperationException(
+                "Team is already eliminated - cannot record loss.");
+        }
+
         Losses++;
     }
 
