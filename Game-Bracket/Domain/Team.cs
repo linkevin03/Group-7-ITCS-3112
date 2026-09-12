@@ -23,4 +23,29 @@ public class Team
         Wins = 0;
         Losses = 0;
     }
+
+    public void UpdateName(string newName)
+    {
+        Name = newName;
+    }
+    public void RecordWin() //Adds to win counter
+    {
+        if (IsEliminated){throw new InvalidOperationException(
+            "Team is eliminated.");}
+        Wins++;
+    }
+
+    public void RecordLoss() //Updates team to eliminated if they lose
+    {
+        if (IsEliminated){throw new InvalidOperationException(
+            "Team is already eliminated - cannot record loss.");}
+        Losses++;
+    }
+
+    public void Eliminate()
+    {
+        if (IsEliminated){throw new InvalidOperationException(
+            "Team is already eliminated.");}
+        IsEliminated = true;
+    }
 }
