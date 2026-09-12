@@ -17,7 +17,7 @@ public class Bracket
 
         if (matches == null)
         {
-            throw new ArgumentNullException(nameof(matches));
+            throw new ArgumentNullException(nameof(matches), "Matches cannot be null");
         }
         
         List<Match> matchList = matches.ToList();
