@@ -29,9 +29,9 @@ Bracket, Team, Match
 
 
 ## Class Invariants and Enforcement
-Bracket: A Bracket must maintain a collection containing strictly more than one match. A Bracket must maintain a collection containing strictly more than one match.
+Bracket: A Bracket must maintain a collection containing strictly more than one match. Enforced by the Bracket constructor, which validates the size of the passed match collection upon creation.
 
-Team: A Team instance must possess a valid, non-empty name, logo, and region throughout its lifecycle. A Team instance must possess a valid, non-empty name, logo, and region throughout its lifecycle.
+Team: A Team instance must possess a valid, non-empty name, logo, and region throughout its lifecycle. Enforced by the Team constructor, which rejects invalid or blank strings by throwing an exception.
 
 Match: Match must reference two distinct, non-null teams, and neither participating team can be marked as eliminated when the match is instantiated. Enforced by the Match constructor, which evaluates team references and elimination properties before assignment.
 
