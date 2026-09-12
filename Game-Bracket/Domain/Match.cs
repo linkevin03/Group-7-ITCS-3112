@@ -17,7 +17,7 @@ public class Match
             throw new ArgumentNullException(nameof(teamB));
         }
 
-        if (ReferenceEquals(teamA, teamB)) // Teams cannot face themselves
+        if (ReferenceEquals(teamA, teamB))
         {
             throw new ArgumentException("Must be different teams.");
         }
