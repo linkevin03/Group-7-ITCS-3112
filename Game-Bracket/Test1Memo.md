@@ -70,4 +70,13 @@ Match associates with exactly one team as TeamB.
 TeamService 1 <>------- 0..* Team
 TeamService owns zero or more teams via composition.
 
+## Program.cs Demonstration Results
+* **Create**: Adds two teams (`Red Birds` and `Blue Birds`) to the system.
+* **Read by Identifier**: Fetches and displays a specific team (`Red Birds`) by name.
+* **Read All**: Lists all registered teams, their logos, and elimination statuses using a procedural loop.
+* **Update**: Changes a team's name from `Red Birds` to `Angry Birds` and verifies the updated state.
+* **Delete**: Removes `Blue Birds` and lists the remaining active teams.
+* **Rule Enforcement**: 
+  * *Domain-Level*: Attempts to schedule a match with an eliminated team (`Sad Pigs`), triggering an expected exception while preserving valid system state.
+  * *Service-Level*: Attempts to register a team with a duplicate name (`Angry Birds`), triggering an exception and confirming that the collection count remains intact.
 
