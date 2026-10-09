@@ -43,11 +43,11 @@ teams into the loser's bracket.
 * **Trigger:** The Tournament Organizer triggers bracket generation from `Program.cs` once team registration closes.
 * **Preconditions:** At least two active, non-eliminated teams are registered in the system.
 * **Primary Flow:**
-  1. The organizer requests initial bracket generation.
-  2. `RandomizerService` retrieves all registered teams from the team repository.
-  3. The service validates that there is a sufficient team count.
-  4. The teams are randomly shuffled and paired into individual `Match` objects with assigned start times.
-  5. A new `Bracket` object containing these matches is instantiated and presented to the organizer.
+1. The organizer requests initial bracket generation.
+2. `RandomizerService` retrieves all registered teams from the team repository.
+3. The service validates that there is a sufficient team count.
+4. The teams are randomly shuffled and paired into individual `Match` objects with assigned start times.
+5. A new `Bracket` object containing these matches is instantiated and presented to the organizer.
 * **Failure Flow:**
   * *Condition:* Fewer than two teams are registered in the system.
   * *Failure Behavior:* An `InvalidOperationException` is thrown, informing the user that minimum team requirements are not met.
@@ -59,11 +59,11 @@ teams into the loser's bracket.
 * **Trigger:** A scheduled match concludes, and the organizer inputs the match results into the system.
 * **Preconditions:** The target match exists, is currently active, and involves two non-eliminated teams.
 * **Primary Flow:**
-  1. The organizer submits the match outcome specifying the winner.
-  2. `LowerBracketService` locates the match and identifies the winning and losing teams.
-  3. The winner's win counter is incremented; the loser's loss counter is incremented.
-  4. The losing team's state is updated via `Eliminate()`.
-  5. The defeated team is automatically queued and routed into the loser's bracket structure for subsequent scheduling.
+1. The organizer submits the match outcome specifying the winner.
+2. `LowerBracketService` locates the match and identifies the winning and losing teams.
+3. The winner's win counter is incremented; the loser's loss counter is incremented.
+4. The losing team's state is updated via `Eliminate()`.
+5. The defeated team is automatically queued and routed into the loser's bracket structure for subsequent scheduling.
 * **Failure Flow:**
   * *Condition:* The match ID cannot be found, or a team involved is already marked as eliminated.
   * *Failure Behavior:* A `KeyNotFoundException` or `InvalidOperationException` is thrown and handled, preventing corrupted state transitions.
