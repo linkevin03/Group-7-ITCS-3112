@@ -24,15 +24,15 @@ public interface ITeamService
     /// <summary>
     /// Retrieves a read-only list of all registered teams in the system.
     /// </summary>
-    /// <returns>An enumerable collection of all teams.</returns>
-    IEnumerable<Team> GetAllTeams();
+    /// <returns>An immutable collection of all teams.</returns>
+    IReadOnlyCollection<Team> GetAllTeams();
     
     /// <summary>
     /// Updates the name of an existing team.
     /// </summary>
     /// <param name="currentName">The current identifier name of the team</param>
     /// <param name="newName">The replacement identifier name for the team.</param>
-    void UpdateTeam(string currentName, string newName);
+    void UpdateTeamName(string currentName, string newName);
     
     /// <summary>
     /// Removes a team from the collection by its name.

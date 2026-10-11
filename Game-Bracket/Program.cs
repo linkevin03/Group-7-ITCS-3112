@@ -1,4 +1,6 @@
-﻿using Game_Bracket.Contracts;
+﻿using System;
+using System.Collections.Generic;
+using Game_Bracket.Contracts;
 using Game_Bracket.Domain;
 using Game_Bracket.Service;
 
@@ -21,10 +23,19 @@ class Program
         teamService.CreateTeam(team2);
         Console.Write($"Created team {team1.Name} and {team2.Name}.\n");
 
+        // Add players and stats to teams
+        Console.WriteLine("[ROSTER & STATS SETUP]");
+        PlayerStats stats1 = new FPSStats(15, 5, 10);
+        Player player1 = new Player("Alice", "alice@redbirds.com", stats1);
+        team1.AddPlayer(player1);
+        Console.WriteLine(
+            $"Added player {player1.GetName()} to {team1.Name} with stats: {player1.Stats.GetSummary()}\n");
+
         // Read object by identifier
         Console.WriteLine("[READ BY IDENTIFIER]");
         Team retrievedTeam = teamService.GetTeamByName("Red Birds");
-        Console.WriteLine($"Team {retrievedTeam.Name} has {retrievedTeam.Wins} wins.\n");
+        Console.WriteLine(
+            $"Team {retrievedTeam.Name} has {retrievedTeam.Wins} wins and {retrievedTeam.Roster.Count} player(s).\n");
 
         // Read and display all managed objects
         Console.WriteLine("[READ ALL]");
@@ -39,13 +50,36 @@ class Program
         // Update one object through the service and display the changed state.
         Console.WriteLine("[UPDATE]");
         Console.WriteLine($"Before Update: Team name is {team1.Name}");
-        teamService.UpdateTeam("Red Birds", "Angry Birds");
+        teamService.UpdateTeamName("Red Birds", "Angry Birds");
         Team updatedTeam = teamService.GetTeamByName("Angry Birds");
         Console.WriteLine($"After Update: Team name is {updatedTeam.Name}\n");
 
+        // Demonstrate bracket generation and match workflow
+        Console.WriteLine("[BRACKET & MATCH GENERATION]");
+        Team team3 = new Team("Green Pigs", "green_pigs.png");
+        Team team4 = new Team("King Pig", "king_pig.png");
+        teamService.CreateTeam(team3);
+        teamService.CreateTeam(team4);
+
+        IBracketType bracketType = new SingleEliminationType("Single Elimination");
+        var matches = bracketType.GenerateMatches(teamService.GetAllTeams());
+        Bracket tournamentBracket = new Bracket(bracketType, matches);
+
+        Console.WriteLine(
+            $"Generated {tournamentBracket.Matches.Count} match(es) for bracket type: {tournamentBracket.Type.Name}");
+        foreach (var match in tournamentBracket.Matches)
+        {
+            Console.WriteLine(
+                $"Match: {match.TeamA.Name} vs {match.TeamB.Name} (Round {match.RoundNumber}) at {match.StartTime}");
+
+            // Simulate setting a winner
+            match.SetWinner(match.TeamA);
+            Console.WriteLine($"Winner decided: {match.Winner.Name}\n");
+        }
+
         // Delete one object and display the remaining collection.
         Console.WriteLine("[DELETE]");
-        Console.WriteLine("Removing team 'Blue Birds");
+        Console.WriteLine("Removing team 'Blue Birds'");
         teamService.DeleteTeam("Blue Birds");
         Console.WriteLine("Remaining teams in the system:");
         foreach (Team team in teamService.GetAllTeams())
@@ -55,35 +89,34 @@ class Program
 
         Console.WriteLine();
 
-
         // Demonstrate rule enforcement
         Console.WriteLine("[RULE ENFORCEMENT]");
 
         // Domain-Object Operation
         Console.WriteLine("[REJECTED DOMAIN-OBJECT OPERATION] - Scheduling a match with eliminated team");
         Console.WriteLine("Scheduling a match with an eliminated team...");
-        Team team3 = new Team("Sad Pigs", "sad_pigs.png");
-        teamService.CreateTeam(team3);
+        Team team5 = new Team("Sad Pigs", "sad_pigs.png");
+        teamService.CreateTeam(team5);
 
         // Eliminate sad pigs
-        team3.Eliminate();
-        Console.WriteLine($"Team {team3.Name} has been eliminated.");
+        team5.Eliminate();
+        Console.WriteLine($"Team {team5.Name} has been eliminated.");
 
         try
         {
-            Match invalidMatch = new Match(updatedTeam, team3, DateTime.Now);
+            Match invalidMatch = new Match(updatedTeam, team5, DateTime.Now, 1);
         }
         catch (InvalidOperationException ex)
         {
             Console.WriteLine($"Expected Domain Exception Caught: {ex.Message}");
-            
+
             int currentCount = 0;
             foreach (var t in teamService.GetAllTeams())
             {
                 currentCount++;
             }
 
-            Console.WriteLine($"State Verification: '{team3.Name}' remains eliminated = {team3.IsEliminated}, " +
+            Console.WriteLine($"State Verification: '{team5.Name}' remains eliminated = {team5.IsEliminated}, " +
                               $"and active collection count is intact at {currentCount} teams.\n");
         }
 
