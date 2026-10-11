@@ -12,6 +12,7 @@ class Program
     {
         // Create at least two valid domain objects and add them to the service.
         ITeamService teamService = new TeamService();
+        IPlayerService playerService = new PlayerService();
 
         Console.WriteLine("TOURNAMENT MANAGEMENT SYSTEM\n");
 
@@ -23,13 +24,17 @@ class Program
         teamService.CreateTeam(team2);
         Console.Write($"Created team {team1.Name} and {team2.Name}.\n");
 
-        // Add players and stats to teams
+        // Add players and stats to teams using PlayerService
         Console.WriteLine("[ROSTER & STATS SETUP]");
         PlayerStats stats1 = new FPSStats(15, 5, 10);
         Player player1 = new Player("Alice", "alice@redbirds.com", stats1);
+
+        playerService.CreatePlayer(player1);
         team1.AddPlayer(player1);
-        Console.WriteLine(
-            $"Added player {player1.GetName()} to {team1.Name} with stats: {player1.Stats.GetSummary()}\n");
+
+        Player retrievedPlayer = playerService.GetPlayerByEmail("alice@redbirds.com");
+        Console.WriteLine($"Created and registered player {retrievedPlayer.GetName()} ({retrievedPlayer.GetEmail()})");
+        Console.WriteLine($"Added player to {team1.Name} with stats: {retrievedPlayer.Stats.GetSummary()}\n");
 
         // Read object by identifier
         Console.WriteLine("[READ BY IDENTIFIER]");
