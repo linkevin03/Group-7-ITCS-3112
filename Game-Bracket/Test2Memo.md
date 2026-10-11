@@ -59,3 +59,36 @@ tournament progress.
 5. The standings are printed to the console.
 * **Failure Flow**: If no matches or teams exist yet, the service returns empty lists without crashing.
 * **Postconditions**: Up-to-date standings and rankings are displayed to the spectator.
+
+## Responsibility and Collaboration Traces
+
+### Trace 1: Tournament Organizer - Tournament Management
+
+#### 1a. Creating Bracket and Scheduling Matches
+Tournament Organizer -> Program.cs -> ITeamService
+-> TeamService
+-> IMatchSchedulingService
+-> MatchSchedulingService
+-> IBracketType -> SingleEliminationType
+-> Bracket -> Match -> Team (Domain Objects)
+
+#### 1b. Recording Match Results and Advancing Bracket
+Tournament Organizer -> Program.cs -> ITournamentProgressionService
+-> TournamentProgressionService
+-> IMatchSchedulingService
+-> MatchSchedulingService
+-> Match -> Team -> Bracket (Domain Objects)
+
+### Trace 2: Team Manager Registers Team and Adds Players
+Team Manager -> Program.cs -> ITeamService
+-> TeamService
+-> IPlayerService
+-> PlayerService
+-> Team -> Player (Domain Objects)
+
+### Trace 3: Spectator Views Leaderboards and Standings
+Spectator -> Program.cs -> ILeaderboardService
+-> LeaderboardService
+-> ITeamService -> TeamService
+-> IPlayerService -> PlayerService
+-> Team -> Player -> FPSStats (Domain Objects)
