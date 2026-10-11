@@ -1,70 +1,61 @@
 # Test 2 Memo
 ## System Actors and Selected Use Cases
 
-### 1. Team Manager
-* **Actor Type:** External Actor
-* **Planned Service:** RegistrationService
-* **Use Case:** Register new teams, retrieve team profiles by name, and manage 
-team records (updates and deletions) prior to tournament generation.
+### Tournament Organizer (external)
+### Use case: Initialize and Schedule Tournament Bracket. 
+The organizer registers teams, selects a bracket strategy, and 
+triggers the MatchSchedulingService to generate the complete tournament schedule.
 
-### 2. Tournament Organizer
-* **Actor Type:** External Actor
-* **Planned Service:** RandomizerService
-* **Use Case:** Generate initial tournament match pairings and schedules randomly using 
-the verified pool of registered teams.
+### Team Manager (external)
+### Use case: Register Team and Manage Roster.
+The manager registers new players into the system via PlayerService and assigns them to a team roster 
+via TeamService while adhering to unique name constraints.
 
-### 3. Tournament Organizer
-* **Actor Type:** External Actor
-* **Planned Service:** LowerBracketService
-* **Use Case:** Process match results to track elimination rules, determine progression, and route losing
-teams into the loser's bracket.
+### Spectator (external)
+### Use case: View Live Standings and Leaderboard.
+The spectator requests current team standings and player rankings from the LeaderboardService to track ongoing 
+tournament progress.
 
 ## Use Case Specifications
-### Use Case 1 - Team Registration
-* **Actor:** Team Manager
-* **Goal:** Successfully register new competing teams into the tournament system with unique names and logos.
-* **Trigger:** The Team Manager requests team registration via the application entry point (`Program.cs`).
-* **Preconditions:** The application is running, and an instance of `RegistrationService` (backed by `ITeamService`) is initialized.
-* **Primary Flow:**
-1. The manager selects the team registration option.
-2. The system prompts for a team name and logo URL/path.
-3. The manager provides valid inputs.
-4. `RegistrationService` validates that the name and logo are not null or whitespace.
-5. The service checks the existing team collection to ensure name uniqueness (case-insensitive).
-6. A new `Team` instance is created and successfully added to the system repository.
-* **Failure Flow:**
-    * *Condition:* Input fields are blank/null, or a team with the exact same name already exists.
-    * *Failure Behavior:* An `ArgumentException` or `InvalidOperationException` is thrown, catching the error and displaying a descriptive message to the console without modifying the registry.
-* **Postconditions:** The team is recorded in the system inventory with zero wins, zero losses, and `IsEliminated` set to false.
 
-### Use Case 2 - Random Bracket Matchup Generation
-* **Actor:** Tournament Organizer
-* **Goal:** Randomly pair registered teams and generate a structured tournament match schedule.
-* **Trigger:** The Tournament Organizer triggers bracket generation from `Program.cs` once team registration closes.
-* **Preconditions:** At least two active, non-eliminated teams are registered in the system.
-* **Primary Flow:**
-1. The organizer requests initial bracket generation.
-2. `RandomizerService` retrieves all registered teams from the team repository.
-3. The service validates that there is a sufficient team count.
-4. The teams are randomly shuffled and paired into individual `Match` objects with assigned start times.
-5. A new `Bracket` object containing these matches is instantiated and presented to the organizer.
-* **Failure Flow:**
-  * *Condition:* Fewer than two teams are registered in the system.
-  * *Failure Behavior:* An `InvalidOperationException` is thrown, informing the user that minimum team requirements are not met.
-* **Postconditions:** A new tournament bracket is structured with valid, scheduled matches between distinct active teams.
+### Use Case 1 - Initialize and Schedule Tournament Bracket
+* **Actor**: Tournament Organizer
+* **Goal**: Generate and schedule the tournament bracket for all registered teams.
+* **Trigger**: The organizer selects the bracket generation option from `Program.cs`.
+* **Preconditions**: At least two valid teams are registered in `TeamService`.
+* **Primary Flow**:
+1. The organizer picks the tournament type.
+2. `Program.cs` calls `MatchSchedulingService.CreateBracket()`, passing in the teams.
+3. The service uses the selected tournament type to build the bracket structure and pairings.
+4. All generated matches are saved into the master match collection (`_matches`).
+5. The system returns the generated bracket so it can be displayed.
+* **Failure Flow**: If there are fewer than two teams or the format is invalid, an exception is thrown and the bracket isn't created.
+* **Postconditions**: A new bracket is generated and all matches are tracked in the scheduling service's collection.
 
-### Use Case 3 - Loser's Bracket Elimination and Progression
-* **Actor:** Tournament Organizer
-* **Goal:** Process completed match outcomes, record wins/losses, and route defeated teams into the loser's bracket.
-* **Trigger:** A scheduled match concludes, and the organizer inputs the match results into the system.
-* **Preconditions:** The target match exists, is currently active, and involves two non-eliminated teams.
-* **Primary Flow:**
-1. The organizer submits the match outcome specifying the winner.
-2. `LowerBracketService` locates the match and identifies the winning and losing teams.
-3. The winner's win counter is incremented; the loser's loss counter is incremented.
-4. The losing team's state is updated via `Eliminate()`.
-5. The defeated team is automatically queued and routed into the loser's bracket structure for subsequent scheduling.
-* **Failure Flow:**
-  * *Condition:* The match ID cannot be found, or a team involved is already marked as eliminated.
-  * *Failure Behavior:* A `KeyNotFoundException` or `InvalidOperationException` is thrown and handled, preventing corrupted state transitions.
-* **Postconditions:** The match result is logged, the loser is officially marked as eliminated from the primary bracket, and their transition to the loser's bracket is secured.
+### Use Case 2 - Register Team and Manage Roster
+* **Actor**: Team Manager
+* **Goal**: Create a new team with a unique name and assign players to its roster.
+* **Trigger**: The manager submits a new team registration via `Program.cs`.
+* **Preconditions**: Players must already be registered in the system's player service.
+* **Primary Flow**:
+1. The manager provides a unique team name.
+2. `Program.cs` calls `TeamService.CreateTeam()`.
+3. The service checks the private collection to ensure the name is unique.
+4. The team is added to the `TeamService` master collection.
+5. The manager adds players from the global pool to the team roster.
+* **Failure Flow**: If the team name already exists, `TeamService` throws an exception preventing duplicates.
+* **Postconditions**: A new team is added to the master list with a unique name and active roster.
+
+### Use Case 3 - View Live Standings and Leaderboard
+* **Actor**: Spectator
+* **Goal**: Check current team standings and player rankings.
+* **Trigger**: The spectator requests to view the leaderboard from the console menu.
+* **Preconditions**: Teams, players, and match data must exist in the system.
+* **Primary Flow**:
+1. The spectator selects the leaderboard option.
+2. `Program.cs` calls `LeaderboardService.GetTeamStandings()` and `LeaderboardService.GetPlayerRankings()`.
+3. The service pulls the current team and player data.
+4. Win/loss records and stats are calculated.
+5. The standings are printed to the console.
+* **Failure Flow**: If no matches or teams exist yet, the service returns empty lists without crashing.
+* **Postconditions**: Up-to-date standings and rankings are displayed to the spectator.
