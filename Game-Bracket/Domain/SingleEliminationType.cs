@@ -42,4 +42,43 @@ public class SingleEliminationType : IBracketType
 
         return matches.AsReadOnly();
     }
+
+    public IReadOnlyList<Match> GenerateNextRound(IReadOnlyCollection<Match> completedMatches, int nextRoundNumber)
+    {
+        if (completedMatches == null)
+        {
+            throw new ArgumentNullException(nameof(completedMatches));
+        }
+
+        var advancingTeams = new List<Team>();
+
+        foreach (var match in completedMatches)
+        {
+            if (match.Winner == null)
+            {
+                throw new InvalidOperationException("Cannot generate next round while uncompleted matches exist.");
+            }
+
+            Team loser = (match.Winner == match.TeamA) ? match.TeamB : match.TeamA;
+            if (!loser.IsEliminated)
+            {
+                loser.Eliminate();
+            }
+
+            advancingTeams.Add(match.Winner);
+        }
+
+        if (advancingTeams.Count < 2)
+        {
+            return new List<Match>().AsReadOnly();
+        }
+
+        var nextRoundMatches = new List<Match>();
+        for (int i = 0; i < advancingTeams.Count - 1; i += 2)
+        {
+            nextRoundMatches.Add(new Match(advancingTeams[i], advancingTeams[i + 1], DateTime.Now, nextRoundNumber));
+        }
+
+        return nextRoundMatches.AsReadOnly();
+    }
 }

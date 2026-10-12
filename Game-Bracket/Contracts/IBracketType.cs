@@ -22,4 +22,14 @@ public interface IBracketType
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="teams"/> is null.</exception>
     /// <exception cref="InvalidOperationException">Thrown when there are insufficient teams to generate matches.</exception>
     IReadOnlyList<Match> GenerateMatches(IReadOnlyCollection<Team> teams);
+    
+    /// <summary>
+    /// Generates the next round of matches based on the outcomes of completed matches.
+    /// </summary>
+    /// <param name="completedMatches">The collection of completed matches from the current round.</param>
+    /// <param name="nextRoundNumber">The round number to assign to the newly generated matches.</param>
+    /// <returns>A read-only list of generated <see cref="Match"/> objects for the next round.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="completedMatches"/> is null.</exception>
+    /// <exception cref="InvalidOperationException">Thrown if any match in the collection is uncompleted.</exception>
+    IReadOnlyList<Match> GenerateNextRound(IReadOnlyCollection<Match> completedMatches, int nextRoundNumber);
 }
