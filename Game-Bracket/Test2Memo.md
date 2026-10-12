@@ -92,3 +92,10 @@ Spectator -> Program.cs -> ILeaderboardService
 -> ITeamService -> TeamService
 -> IPlayerService -> PlayerService
 -> Team -> Player -> FPSStats (Domain Objects)
+
+## SOLID Design Reflection
+### S - Single Responsibility
+### O - Open/Closed
+### L - Liskov Substitution
+### I - Interface Segregation
+### D - Dependency Inversion
