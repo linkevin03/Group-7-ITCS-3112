@@ -95,7 +95,33 @@ Spectator -> Program.cs -> ILeaderboardService
 
 ## SOLID Design Reflection
 ### S - Single Responsibility
+Every class owns a single, cohesive responsibility tied to a specific  actor/stakeholder.
+For example, `LeaderboardService` exclusively manages sorting and querying standings and rankings.
+The actor responsible who can request this class to change is the spectator.
+
 ### O - Open/Closed
+Our system allows extension without requiring modification through
+polymorphism. For example, `LeaderboardService.GetPlayerRankings` evaluates performance polymorphically via abstract 
+`PlayerStats.GetStatValue`, allowing new game stats, such as Soccer, to be added without altering service logic.
+Similarly, new tournament formats are introduced by implementing `IBracketType`.
+
 ### L - Liskov Substitution
+`FPSStats` implements `PlayerStats` while honoring expected return types and non-negative numeric invariants.
+
+Scenario: A subclass that bypassed validation to permit negative kills or threw unexpected exceptions instead of safe 
+fallbacks during `GetStatValue` would break substitutability and expected failure behavior.
+
 ### I - Interface Segregation
+The service layer is segregated into `IMatchSchedulingService`, `ITournamentProgressionService`, 
+`ILeaderboardService`, `ITeamService`, and `IPlayerService`.
+
+Clients depend only on the exact service methods required for their specific workflow.
+Like spectators would depend on ILeaderBoardService, tournament organizers would use IMatchSchedulingService/ITournamentProgressionService
+while team managers would use ITeamService/IPlayerService.
+
 ### D - Dependency Inversion
+After reviewing high-level modules such as Program.cs and our other services.
+A place where high-level policy could otherwise depend
+directly on a low-level concrete implementation would be in Program.cs
+with direct instantiation, but instead we depend strictly on abstractions like `IMatchSchedulingService` and `ILeaderboardService`.
+This ensures system wiring remains flexible and protected from internal changes.
