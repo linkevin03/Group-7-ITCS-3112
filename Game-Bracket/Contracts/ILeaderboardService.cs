@@ -37,30 +37,34 @@ public interface ILeaderboardService
     IReadOnlyList<Team> GetTeamStandings(IEnumerable<Team> teams);
 
     /// <summary>
-    /// Retrieves the rankings for the specified players.
+    /// Retrieves the rankings for the specified players based on a given metric.
     /// </summary>
     /// <param name="players">
     /// The collection of players. Must not be null.
     /// </param>
+    /// <param name="statMetric">
+    /// The statistical metric used to sort and rank the players (e.g., "Kills"). Must not be null or empty.
+    /// </param>
     /// <returns>
-    /// A read-only list of ranked players sorted by performance.
+    /// A read-only list of ranked players sorted by the specified statistic.
     /// </returns>
     /// <remarks>
     /// Preconditions:
     /// - players must not be null.
+    /// - statMetric must not be null or empty.
     /// 
     /// Postconditions:
-    /// - Returns a sorted, read-only collection of players ordered by underlying statistics.
+    /// - Returns a sorted, read-only collection of players ordered by the requested statistic.
     /// - This operation does not modify player records.
     /// 
     /// Expected failures:
-    /// - System.ArgumentNullException when players is null.
+    /// - System.ArgumentNullException when players or statMetric is null.
     /// 
     /// Side Effects:
     /// - None (pure query operation).
     /// </remarks>
     /// <exception cref="System.ArgumentNullException">
-    /// Thrown when players is null.
+    /// Thrown when players or statMetric is null.
     /// </exception>
-    IReadOnlyList<Player> GetPlayerRankings(IEnumerable<Player> players);
+    IReadOnlyList<Player> GetPlayerRankings(IEnumerable<Player> players, string statMetric);
 }

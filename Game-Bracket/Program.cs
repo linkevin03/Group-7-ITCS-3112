@@ -14,7 +14,12 @@ class Program
         ITeamService teamService = new TeamService();
         IPlayerService playerService = new PlayerService();
 
-        Console.WriteLine("TOURNAMENT MANAGEMENT SYSTEM\n");
+        // --- MEMO 2 SERVICES ---
+        IMatchSchedulingService matchSchedulingService = new MatchSchedulingService();
+        ITournamentProgressionService progressionService = new TournamentProgressionService();
+        ILeaderboardService leaderboardService = new LeaderboardService();
+
+        Console.WriteLine("TOURNAMENT MANAGEMENT SYSTEM - MEMO 1 & 2 DEMO\n");
 
         Console.WriteLine("[CREATE]");
         Team team1 = new Team("Red Birds", "red_birds.png");
@@ -29,8 +34,13 @@ class Program
         PlayerStats stats1 = new FPSStats(15, 5, 10);
         Player player1 = new Player("Alice", "alice@redbirds.com", stats1);
 
+        PlayerStats stats2 = new FPSStats(22, 3, 8);
+        Player player2 = new Player("Bob", "bob@bluebirds.com", stats2);
+
         playerService.CreatePlayer(player1);
+        playerService.CreatePlayer(player2);
         team1.AddPlayer(player1);
+        team2.AddPlayer(player2);
 
         Player retrievedPlayer = playerService.GetPlayerByEmail("alice@redbirds.com");
         Console.WriteLine($"Created and registered player {retrievedPlayer.GetName()} ({retrievedPlayer.GetEmail()})");
@@ -59,28 +69,56 @@ class Program
         Team updatedTeam = teamService.GetTeamByName("Angry Birds");
         Console.WriteLine($"After Update: Team name is {updatedTeam.Name}\n");
 
-        // Demonstrate bracket generation and match workflow
-        Console.WriteLine("[BRACKET & MATCH GENERATION]");
+        // --- MEMO 2: MATCH SCHEDULING SERVICE DEMO ---
+        Console.WriteLine("[MEMO 2 - MATCH SCHEDULING SERVICE]");
         Team team3 = new Team("Green Pigs", "green_pigs.png");
         Team team4 = new Team("King Pig", "king_pig.png");
         teamService.CreateTeam(team3);
         teamService.CreateTeam(team4);
 
         IBracketType bracketType = new SingleEliminationType("Single Elimination");
-        var matches = bracketType.GenerateMatches(teamService.GetAllTeams());
-        Bracket tournamentBracket = new Bracket(bracketType, matches);
 
+        // Using MatchSchedulingService instead of direct instantiation
+        Bracket tournamentBracket = matchSchedulingService.CreateBracket(bracketType, teamService.GetAllTeams());
         Console.WriteLine(
-            $"Generated {tournamentBracket.Matches.Count} match(es) for bracket type: {tournamentBracket.Type.Name}");
-        foreach (var match in tournamentBracket.Matches)
-        {
-            Console.WriteLine(
-                $"Match: {match.TeamA.Name} vs {match.TeamB.Name} (Round {match.RoundNumber}) at {match.StartTime}");
+            $"MatchSchedulingService created a bracket with {tournamentBracket.Matches.Count} match(es).");
 
-            // Simulate setting a winner
-            match.SetWinner(match.TeamA);
-            Console.WriteLine($"Winner decided: {match.Winner.Name}\n");
+        // Demonstrate rescheduling a match via MatchSchedulingService
+        var sampleMatch = tournamentBracket.Matches.First();
+        var rescheduledTime = DateTime.Now.AddDays(1);
+        matchSchedulingService.RescheduleMatch(sampleMatch, rescheduledTime);
+        Console.WriteLine($"Rescheduled match start time to: {sampleMatch.StartTime}\n");
+
+        // --- MEMO 2: TOURNAMENT PROGRESSION SERVICE DEMO ---
+        Console.WriteLine("[MEMO 2 - TOURNAMENT PROGRESSION SERVICE]");
+        Console.WriteLine($"Simulating match result between {sampleMatch.TeamA.Name} and {sampleMatch.TeamB.Name}...");
+
+        // Record result using TournamentProgressionService
+        progressionService.RecordMatchResult(sampleMatch, sampleMatch.TeamA, sampleMatch.TeamB);
+        Console.WriteLine($"Winner recorded: {sampleMatch.Winner.Name}");
+
+        // Check loser elimination status
+        Team loser = ReferenceEquals(sampleMatch.TeamA, sampleMatch.Winner) ? sampleMatch.TeamB : sampleMatch.TeamA;
+        Console.WriteLine($"Loser ({loser.Name}) elimination status: {loser.IsEliminated}\n");
+
+        // --- MEMO 2: LEADERBOARD SERVICE DEMO ---
+        Console.WriteLine("[MEMO 2 - LEADERBOARD SERVICE]");
+
+        var teamStandings = leaderboardService.GetTeamStandings(teamService.GetAllTeams());
+        Console.WriteLine("Team Standings:");
+        foreach (var t in teamStandings)
+        {
+            Console.WriteLine($" - {t.Name} | Wins: {t.Wins} | Eliminated: {t.IsEliminated}");
         }
+
+        var playerRankings = leaderboardService.GetPlayerRankings(new[] { player1, player2 }, "Kills");
+        Console.WriteLine("\nPlayer Rankings (Sorted by Kills):");
+        foreach (var p in playerRankings)
+        {
+            Console.WriteLine($" - {p.GetName()} | Kills: {p.Stats.GetStatValue("Kills")}");
+        }
+
+        Console.WriteLine();
 
         // Delete one object and display the remaining collection.
         Console.WriteLine("[DELETE]");
@@ -99,11 +137,9 @@ class Program
 
         // Domain-Object Operation
         Console.WriteLine("[REJECTED DOMAIN-OBJECT OPERATION] - Scheduling a match with eliminated team");
-        Console.WriteLine("Scheduling a match with an eliminated team...");
         Team team5 = new Team("Sad Pigs", "sad_pigs.png");
         teamService.CreateTeam(team5);
 
-        // Eliminate sad pigs
         team5.Eliminate();
         Console.WriteLine($"Team {team5.Name} has been eliminated.");
 

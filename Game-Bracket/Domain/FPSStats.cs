@@ -34,6 +34,18 @@ public class FPSStats : PlayerStats
     {
         Assists++;
     }
+    
+    // Dynamic lookup for any stat name
+    public override int GetStatValue(string statName)
+    {
+        return statName?.ToLowerInvariant() switch
+        {
+            "kills" => Kills,
+            "deaths" => Deaths,
+            "assists" => Assists,
+            _ => 0 // Fallback if an unknown stat is requested
+        };
+    }
 
     public override string GetSummary()
     {
