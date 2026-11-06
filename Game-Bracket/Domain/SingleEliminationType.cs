@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using Game_Bracket.Contracts;
 using Game_Bracket.Domain;
 
@@ -7,19 +9,9 @@ namespace Game_Bracket.Domain;
 
 public class SingleEliminationType : IBracketType
 {
-    public string Name { get; }
+    public string Name => "Single Elimination";
 
-    public SingleEliminationType(string name)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException("Bracket type name cannot be null or whitespace.", nameof(name));
-        }
-
-        Name = name;
-    }
-
-    // responsible for the initial set-up not the elimination process and progression
+    // Responsible for initial set-up: validates team count, randomizes seedings, builds round 1 pairings, and assigns schedule timestamps
     public IReadOnlyList<Match> GenerateMatches(IReadOnlyCollection<Team> teams)
     {
         if (teams == null)
@@ -28,16 +20,34 @@ public class SingleEliminationType : IBracketType
         }
 
         var teamList = new List<Team>(teams);
+
+        // 1. Validate team count (minimum of 2 teams required)
         if (teamList.Count < 2)
         {
-            throw new InvalidOperationException("At least two teams are required to generate a bracket.");
+            throw new ArgumentException("A tournament requires at least 2 teams to generate a bracket.");
         }
 
+        // 2. Randomize team seedings for fair initial matchups
+        var rng = new Random();
+        var seededTeams = teamList.OrderBy(_ => rng.Next()).ToList();
+
         var matches = new List<Match>();
-        for (int i = 0; i < teamList.Count - 1; i += 2)
+        int roundNumber = 1;
+        DateTime baseStartTime = DateTime.UtcNow.AddHours(1); // Default start time
+
+        // 3. Build match pairings for the first round with assigned schedule timestamps
+        for (int i = 0; i < seededTeams.Count; i += 2)
         {
-            var match = new Match(teamList[i], teamList[i + 1], DateTime.Now, 1);
-            matches.Add(match);
+            if (i + 1 < seededTeams.Count)
+            {
+                var match = new Match(
+                    teamA: seededTeams[i],
+                    teamB: seededTeams[i + 1],
+                    startTime: baseStartTime.AddMinutes(30 * (i / 2)),
+                    roundNumber: roundNumber
+                );
+                matches.Add(match);
+            }
         }
 
         return matches.AsReadOnly();
@@ -74,9 +84,14 @@ public class SingleEliminationType : IBracketType
         }
 
         var nextRoundMatches = new List<Match>();
-        for (int i = 0; i < advancingTeams.Count - 1; i += 2)
+        DateTime nextRoundStartTime = DateTime.UtcNow.AddDays(1);
+
+        for (int i = 0; i < advancingTeams.Count; i += 2)
         {
-            nextRoundMatches.Add(new Match(advancingTeams[i], advancingTeams[i + 1], DateTime.Now, nextRoundNumber));
+            if (i + 1 < advancingTeams.Count)
+            {
+                nextRoundMatches.Add(new Match(advancingTeams[i], advancingTeams[i + 1], nextRoundStartTime.AddMinutes(30 * (i / 2)), nextRoundNumber));
+            }
         }
 
         return nextRoundMatches.AsReadOnly();

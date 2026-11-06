@@ -76,7 +76,7 @@ class Program
         teamService.CreateTeam(team3);
         teamService.CreateTeam(team4);
 
-        IBracketType bracketType = new SingleEliminationType("Single Elimination");
+        IBracketType bracketType = new SingleEliminationType();
 
         // Using MatchSchedulingService instead of direct instantiation
         Bracket tournamentBracket = matchSchedulingService.CreateBracket(bracketType, teamService.GetAllTeams());
