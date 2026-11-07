@@ -21,3 +21,10 @@ Outside of the system boundary we exclude match telemetry data (e.g., goals or K
 * **Selected Pattern:** Command Pattern
 * **What it does:** It turns a user action like changing a match winner or fixing a mistake in the score into its own task. This keeps the button or menu click completely separate from the actual code that updates the tournament bracket.
 * **Why we used it:** Makes changing match winners a cleaner process, and gives an easier way to undo mistakes/rollback the bracket if a match result is disputed.
+
+### Kevin Lin
+#### Design-Pattern Selection and Justification
+- **Selected Pattern:** Strategy Pattern
+- **Supported End-to-End Use Case:** Case 10 - Initialize and Schedule Tournament Bracket
+- **Problem Motivated By:** Hardcoding tournament bracket algorithms (such as single elimination and future double-elimination formats) directly into the scheduling service using conditional `if/else` or `switch` statements, which leads to tight coupling and rigid code.
+- **Why We Used It:** It encapsulates bracket generation algorithms into interchangeable strategy classes (`IBracketType`), adhering to the Open/Closed Principle. This allows new tournament formats to be added seamlessly without modifying core service logic (`MatchSchedulingService`).
