@@ -90,7 +90,12 @@ public class SingleEliminationType : IBracketType
         {
             if (i + 1 < advancingTeams.Count)
             {
-                nextRoundMatches.Add(new Match(advancingTeams[i], advancingTeams[i + 1], nextRoundStartTime.AddMinutes(30 * (i / 2)), nextRoundNumber));
+                nextRoundMatches.Add(new Match(
+                    team1: advancingTeams[i], 
+                    team2: advancingTeams[i + 1], 
+                    startTime: nextRoundStartTime.AddMinutes(30 * (i / 2)), 
+                    roundNumber: nextRoundNumber
+                ));
             }
         }
 
