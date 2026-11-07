@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Game_Bracket.Contracts;
 using Game_Bracket.Domain;
 using Game_Bracket.Service;
@@ -91,14 +92,14 @@ class Program
 
         // --- MEMO 2: TOURNAMENT PROGRESSION SERVICE DEMO ---
         Console.WriteLine("[MEMO 2 - TOURNAMENT PROGRESSION SERVICE]");
-        Console.WriteLine($"Simulating match result between {sampleMatch.TeamA.Name} and {sampleMatch.TeamB.Name}...");
+        Console.WriteLine($"Simulating match result between {sampleMatch.Team1.Name} and {sampleMatch.Team2.Name}...");
 
         // Record result using TournamentProgressionService
-        progressionService.RecordMatchResult(sampleMatch, sampleMatch.TeamA, sampleMatch.TeamB);
+        progressionService.RecordMatchResult(sampleMatch, sampleMatch.Team1, sampleMatch.Team2);
         Console.WriteLine($"Winner recorded: {sampleMatch.Winner.Name}");
 
         // Check loser elimination status
-        Team loser = ReferenceEquals(sampleMatch.TeamA, sampleMatch.Winner) ? sampleMatch.TeamB : sampleMatch.TeamA;
+        Team loser = ReferenceEquals(sampleMatch.Team1, sampleMatch.Winner) ? sampleMatch.Team2 : sampleMatch.Team1;
         Console.WriteLine($"Loser ({loser.Name}) elimination status: {loser.IsEliminated}\n");
 
         // --- MEMO 2: LEADERBOARD SERVICE DEMO ---

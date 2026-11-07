@@ -41,8 +41,8 @@ public class SingleEliminationType : IBracketType
             if (i + 1 < seededTeams.Count)
             {
                 var match = new Match(
-                    teamA: seededTeams[i],
-                    teamB: seededTeams[i + 1],
+                    team1: seededTeams[i],
+                    team2: seededTeams[i + 1],
                     startTime: baseStartTime.AddMinutes(30 * (i / 2)),
                     roundNumber: roundNumber
                 );
@@ -69,7 +69,7 @@ public class SingleEliminationType : IBracketType
                 throw new InvalidOperationException("Cannot generate next round while uncompleted matches exist.");
             }
 
-            Team loser = (match.Winner == match.TeamA) ? match.TeamB : match.TeamA;
+            Team loser = (match.Winner == match.Team1) ? match.Team2 : match.Team1;
             if (!loser.IsEliminated)
             {
                 loser.Eliminate();

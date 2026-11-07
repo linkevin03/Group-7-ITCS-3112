@@ -5,9 +5,9 @@ namespace Game_Bracket.Domain;
 
 public class Match
 {
-    public Team TeamA { get; }
+    public Team Team1 { get; }
 
-    public Team TeamB { get; }
+    public Team Team2 { get; }
 
     public DateTime StartTime { get; private set; }
 
@@ -15,30 +15,30 @@ public class Match
 
     public Team Winner { get; private set; }
 
-    public Match(Team teamA, Team teamB, DateTime startTime, int roundNumber)
+    public Match(Team team1, Team team2, DateTime startTime, int roundNumber)
     {
-        if (teamA == null)
+        if (team1 == null)
         {
-            throw new ArgumentNullException(nameof(teamA));
+            throw new ArgumentNullException(nameof(team1));
         }
 
-        if (teamB == null)
+        if (team2 == null)
         {
-            throw new ArgumentNullException(nameof(teamB));
+            throw new ArgumentNullException(nameof(team2));
         }
 
-        if (ReferenceEquals(teamA, teamB))
+        if (ReferenceEquals(team1, team2))
         {
             throw new ArgumentException("Must be different teams.");
         }
 
-        if (teamA.IsEliminated || teamB.IsEliminated)
+        if (team1.IsEliminated || team2.IsEliminated)
         {
             throw new InvalidOperationException("Cannot schedule a match involving an eliminated team.");
         }
 
-        TeamA = teamA;
-        TeamB = teamB;
+        Team1 = team1;
+        Team2 = team2;
         StartTime = startTime;
         RoundNumber = roundNumber;
         Winner = null;
@@ -56,7 +56,7 @@ public class Match
             throw new ArgumentNullException(nameof(winner));
         }
 
-        if (!ReferenceEquals(winner, TeamA) && !ReferenceEquals(winner, TeamB))
+        if (!ReferenceEquals(winner, Team1) && !ReferenceEquals(winner, Team2))
         {
             throw new ArgumentException("Winner must be one of the competing teams.");
         }

@@ -28,7 +28,7 @@ public class TournamentProgressionService : ITournamentProgressionService
         match.SetWinner(winner);
 
         // Validate that the loser is the other competing team
-        if (!ReferenceEquals(loser, match.TeamA) && !ReferenceEquals(loser, match.TeamB))
+        if (!ReferenceEquals(loser, match.Team1) && !ReferenceEquals(loser, match.Team2))
         {
             throw new ArgumentException("Loser must be one of the competing teams.");
         }
