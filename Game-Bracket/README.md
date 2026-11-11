@@ -28,3 +28,8 @@ Outside of the system boundary we exclude match telemetry data (e.g., goals or K
 - **Supported End-to-End Use Case:** Case 10 - Initialize and Schedule Tournament Bracket
 - **Problem Motivated By:** Hardcoding tournament bracket algorithms (such as single elimination and future double-elimination formats) directly into the scheduling service using conditional `if/else` or `switch` statements, which leads to tight coupling and rigid code.
 - **Why We Used It:** It encapsulates bracket generation algorithms into interchangeable strategy classes (`IBracketType`), adhering to the Open/Closed Principle. This allows new tournament formats to be added seamlessly without modifying core service logic (`MatchSchedulingService`).
+
+### Greg Lowther
+#### Design-Pattern Selection and Justification
+* **Selected Pattern:** Factory Pattern
+* **Explanation and Justification:** It generates a map veto rules object based on input provided by the organizer. This makes changing the veto rules based on match type easier to maintain and extend by focusing creation within the dedicated factory.
