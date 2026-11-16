@@ -11,7 +11,7 @@ Organizers and teams spend a lot of time meeting, resolving scheduling conflicts
 The domain requires managing match progression, win-loss records, and elimination rules across brackets. 
 The proposed system must provide team matchups, time scheduling, tracking which team loses and can compete in the loser’s bracket. 
 The system boundary includes generated team matchups, match schedules, and brackets for the winning/losing teams. 
-Outside of the system boundary we exclude match telemetry data (e.g., goals or KDA) and prize management.
+Outside of the system boundary we exclude previous history that teams come with.
 
 # Test 3 Memo
 ## Design Pattern Integration Reflection
