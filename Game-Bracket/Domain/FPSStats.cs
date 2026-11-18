@@ -8,7 +8,7 @@ public class FPSStats : PlayerStats
     public int Deaths { get; private set; }
     public int Assists { get; private set; }
 
-    public FPSStats(int kills, int deaths, int assists)
+    public FPSStats(int kills = 0, int deaths = 0, int assists = 0)
     {
         if (kills < 0 || deaths < 0 || assists < 0)
         {
@@ -20,22 +20,18 @@ public class FPSStats : PlayerStats
         Assists = assists;
     }
 
-    public void AddKill()
+    public void RecordMatchStats(int kills, int deaths, int assists)
     {
-        Kills++;
+        if (kills < 0 || deaths < 0 || assists < 0)
+        {
+            throw new ArgumentException("Match stats cannot be negative.");
+        }
+
+        Kills += kills;
+        Deaths += deaths;
+        Assists += assists;
     }
 
-    public void AddDeath()
-    {
-        Deaths++;
-    }
-
-    public void AddAssist()
-    {
-        Assists++;
-    }
-    
-    // Dynamic lookup for any stat name
     public override int GetStatValue(string statName)
     {
         return statName?.ToLowerInvariant() switch
@@ -43,7 +39,7 @@ public class FPSStats : PlayerStats
             "kills" => Kills,
             "deaths" => Deaths,
             "assists" => Assists,
-            _ => 0 // Fallback if an unknown stat is requested
+            _ => 0
         };
     }
 
