@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Game_Bracket.Contracts;
@@ -69,7 +70,19 @@ class Program
         matchSchedulingService.RescheduleMatch(sampleMatch, rescheduledTime);
         Console.WriteLine($"Rescheduled match start time to: {sampleMatch.StartTime}\n");
 
-        // 5. ROSTER & STATS SETUP (Assigned to the actual teams playing in sampleMatch)
+        // 5. MAP POOL VETO DEMO (FACTORY PATTERN)
+        Console.WriteLine("[MAP VETO SERVICE (FACTORY PATTERN)]");
+        Map[] mapPool = new Map[]
+        {
+            new Map("Ascent", "ascent.png"),
+            new Map("Bind", "bind.png"),
+            new Map("Haven", "haven.png")
+        };
+        IMapVetoService mapVetoService = new MapVetoService(mapPool, "BestOfOne", new MapVetoFactory());
+        mapVetoService.RunMapVeto();
+        Console.WriteLine($"Map Veto Complete. Selected Map: {mapVetoService.GetSelectedMap().Name}\n");
+
+        // 6. ROSTER & STATS SETUP (Assigned to the actual teams playing in sampleMatch)
         Console.WriteLine("[ROSTER & STATS SETUP]");
         PlayerStats stats1 = new FPSStats(15, 5, 10);
         Player player1 = new Player("Alice", "alice@redbirds.com", stats1);
@@ -92,7 +105,7 @@ class Program
         Console.WriteLine($"Created and registered player {retrievedPlayer.GetName()} ({retrievedPlayer.GetEmail()})");
         Console.WriteLine($"Added players to match teams ({sampleMatch.Team1.Name} vs {sampleMatch.Team2.Name})\n");
 
-        // 6. VALORANT AGENT SELECTION DEMO
+        // 7. VALORANT AGENT SELECTION DEMO
         Console.WriteLine("[AGENT SELECTION SERVICE]");
         Agent jett = new Agent("Jett", AgentRole.Duelist, "jett.png");
         Agent omen = new Agent("Omen", AgentRole.Controller, "omen.png");
@@ -119,7 +132,7 @@ class Program
             Console.WriteLine($"Resolved: {player3.GetName()} locked in {omen.Name} ({omen.Role}).\n");
         }
 
-        // 7. TOURNAMENT PROGRESSION SERVICE DEMO
+        // 8. TOURNAMENT PROGRESSION SERVICE DEMO
         Console.WriteLine("[TOURNAMENT PROGRESSION SERVICE]");
         Console.WriteLine($"Simulating match result between {sampleMatch.Team1.Name} and {sampleMatch.Team2.Name}...");
 
@@ -129,7 +142,7 @@ class Program
         Team loser = ReferenceEquals(sampleMatch.Team1, sampleMatch.Winner) ? sampleMatch.Team2 : sampleMatch.Team1;
         Console.WriteLine($"Loser ({loser.Name}) elimination status: {loser.IsEliminated}\n");
 
-        // 8. MATCH DISPUTE OVERRIDE & ROLLBACK DEMO (COMMAND PATTERN)
+        // 9. MATCH DISPUTE OVERRIDE & ROLLBACK DEMO (COMMAND PATTERN)
         Console.WriteLine("[MATCH DISPUTE OVERRIDE (COMMAND PATTERN)]");
         int matchId = sampleMatch.RoundNumber; 
         string previousWinnerId = sampleMatch.Winner.Name;
@@ -143,7 +156,7 @@ class Program
         overrideCommand.Unexecute();
         Console.WriteLine("Rollback completed successfully.\n");
 
-        // 9. LEADERBOARD SERVICE DEMO
+        // 10. LEADERBOARD SERVICE DEMO
         Console.WriteLine("[LEADERBOARD SERVICE]");
         var teamStandings = leaderboardService.GetTeamStandings(teamService.GetAllTeams());
         Console.WriteLine("Team Standings:");
@@ -161,7 +174,7 @@ class Program
 
         Console.WriteLine();
 
-        // 10. DELETE & RULE ENFORCEMENT DEMOS
+        // 11. DELETE & RULE ENFORCEMENT DEMOS
         Console.WriteLine("[DELETE]");
         Console.WriteLine("Removing team 'Blue Birds'");
         teamService.DeleteTeam("Blue Birds");
